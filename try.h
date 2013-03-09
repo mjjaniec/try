@@ -39,7 +39,7 @@
    extern __thread char ____msg[];
    #define ptry                 { ____stack_trace=false; ____stat=!(errno=(int)
    #define try                  { ____stack_trace=false; errno=0; ____stat=(int)(
-   #define assert(cond,msg)		{ if(!(cond)){errno=____NON_STANDARD_ERROR; strncpy(___msg,msg,____MSG_TAB_SIZE)}
+   #define assert(cond,msg)		{ if(!(cond)){errno=____NON_STANDARD_ERROR; strncpy(___msg,msg,____MSG_TAB_SIZE);}
    #define $                    );if(____cond)return false; }
    #define $c                   );if(____cond);             }
    #define $e                   );if(____cond)exit(1);      }
