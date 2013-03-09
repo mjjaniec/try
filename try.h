@@ -29,7 +29,7 @@
 
 #define ____err ___err(__FILE__,__LINE__)
 #define ____cond (____stat==-1 || ____stat==0) && errno!=EAGAIN && ____err
-#define ____assertimpl if(!(cond)){errno=____NON_STANDARD_ERROR; strncpy(___msg,msg,____MSG_TAB_SIZE);
+#define ____assertimpl if(!(cond)){errno=____NON_STANDARD_ERROR; strncpy(____msg,msg,____MSG_TAB_SIZE);
 
 #define ____NON_STANDARD_ERROR 32000
 #define ____MSG_TAB_SIZE 1024
