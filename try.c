@@ -5,7 +5,7 @@ __thread bool ____stack_trace;
 __thread char ____msg[____MSG_TAB_SIZE];
 
 #define size 4096            // a la constant :)
-void ___nth(int fd, int line){
+void _____nth(int fd, int line){
    int stat, cline=1, i, j;
    bool nend=true, all=false;
    char buff[size+1];                   //+ one for eventually null.
@@ -41,29 +41,35 @@ void ___nth(int fd, int line){
 
 #undef size
 
-bool ___err(char *file, int line){
+bool _____err(char *file, int line){
   if(!errno)return false;
   int fd, __errno;   
   __errno=errno;
   
   if(!____stack_trace){
-    fprintf(stderr,"\n [%6d]  ERROR:\n",(int)getpid());
+    fprintf(stderr,"\n   ERROR: %s [%6d] \n",getenv("_"),(int)getpid());
     errno=__errno;
     if(errno!=____NON_STANDARD_ERROR) perror("");
     else fprintf(stderr,"%s",____msg);
-    fprintf(stderr,"\nerr at line: %s: %d: ",file, line);
+    fprintf(stderr,"\nerr at line: %s: %5d: ",file, line);
     fd=open(file,O_RDONLY);
-    if(fd!=-1)___nth(fd,line);
+    if(fd!=-1)_____nth(fd,line);
     fprintf(stderr,"\n");
     ____stack_trace=true;
   }else{
-    fprintf(stderr,"called from: %s: %d: ",file, line);
+    fprintf(stderr,"called from: %s: %5d: ",file, line);
     fd=open(file,O_RDONLY);
-    if(fd!=-1)___nth(fd,line);
+    if(fd!=-1)_____nth(fd,line);
     fprintf(stderr,"\n");
   }
   
   errno=__errno;      
   return true;
 }
-   
+
+bool _____assert(bool cond,const char * msg){
+  if(cond)return false;
+  errno=____NON_STANDARD_ERROR; 
+  strncpy(____msg,msg,____MSG_TAB_SIZE); 
+  return true;
+}
