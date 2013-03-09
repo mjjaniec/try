@@ -29,9 +29,11 @@
 
 #define ____err ___err(__FILE__,__LINE__)
 #define ____cond (____stat==-1 || ____stat==0) && errno!=EAGAIN && ____err
-#define err {if(____err)return false;}
+#define ____assertimpl if(!(cond)){errno=____NON_STANDARD_ERROR; strncpy(___msg,msg,____MSG_TAB_SIZE);
+
 #define ____NON_STANDARD_ERROR 32000
 #define ____MSG_TAB_SIZE 1024
+
 
 #ifndef RELEASE
    extern __thread int ____stat;
@@ -39,15 +41,19 @@
    extern __thread char ____msg[];
    #define ptry                 { ____stack_trace=false; ____stat=!(errno=(int)
    #define try                  { ____stack_trace=false; errno=0; ____stat=(int)(
-   #define assert(cond,msg)		{ if(!(cond)){errno=____NON_STANDARD_ERROR; strncpy(___msg,msg,____MSG_TAB_SIZE);}
+   #define assert(cond,msg)     { ____assertimpl return false; }}
+   #define assertc(cond,msg)    { ____assertimpl }}
+   #define asserte(cond,msg)    { ____assertimpl exit(1); }} 
    #define $                    );if(____cond)return false; }
    #define $c                   );if(____cond);             }
    #define $e                   );if(____cond)exit(1);      }
-   #define $$ 			printf("%s: %d\n",__FILE__, __LINE__);
+   #define $$                   printf("%s: %d\n",__FILE__, __LINE__);
    
 #endif
 #ifdef RELEASE  
    #define assert
+   #define assertc
+   #define asserte
    #define ptry    
    #define try
    #define $
