@@ -1,0 +1,14 @@
+/**
+ * Made by Michał Janiec
+ * 
+ * using
+ *      try systemcall()$;
+ *
+ * POSIX don't give uniform way to notify about errors so:
+ * $ is best way for most cases but there are no guarantee that it works properly.
+ * If function error code is different than 0 or -1 then it WONT be CAUGHT, by try and $.
+ * Moreover POSIX let functions set errno even if its executes successfully so proper value maybe misinterpreted.
+ * 
+ * Also you can declare RELEASE before including this file to erase all error checks.
+ * 
+ **/
