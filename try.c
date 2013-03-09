@@ -69,6 +69,7 @@ bool _____err(char *file, int line){
 
 bool _____assert(bool cond,const char * msg){
   if(cond)return false;
+  ____stack_trace=false;
   errno=____NON_STANDARD_ERROR; 
   strncpy(____msg,msg,____MSG_TAB_SIZE); 
   return true;
