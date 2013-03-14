@@ -1,19 +1,30 @@
 #include "try.h"
+#include <stdarg.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
+#include <fcntl.h>
+
+#define ____NON_STANDARD_ERROR 32000
+#define ____MSG_TAB_SIZE 1024
+#define ____SIZE 4096            
+
 
 __thread int  ____stat;
 __thread bool ____stack_trace;
 __thread char ____msg[____MSG_TAB_SIZE];
 
-#define size 4096            // a la constant :)
 void _____nth(int fd, int line){
    int stat, cline=1, i, j;
    bool nend=true, all=false;
-   char buff[size+1];                   //+ one for eventually null.
+   char buff[____SIZE+1];                   //+ one for eventually null.
    
    while(nend){
-      stat=read(fd,buff,size);
+      stat=read(fd,buff,____SIZE);
       if(stat==-1)return;
-      if(stat<size)nend=false,all=true;
+      if(stat<____SIZE)nend=false,all=true;
       for(i=0; cline<line && i<stat; ++i)
          if(buff[i]=='\n')
             ++cline;
@@ -28,7 +39,7 @@ void _____nth(int fd, int line){
             buff[stat]='\0';
             strcpy(buff,buff+i);
             i=0;
-            read(fd,buff+i,size-i);
+            read(fd,buff+i,____SIZE-i);
             for(j=i+1; j<stat && buff[j]!='\n';++j);
             if(j<stat)buff[j]='\0';     
             else return;        //probably line is longer than 4096 or an error occurred.
@@ -38,8 +49,6 @@ void _____nth(int fd, int line){
    }
    fprintf(stderr,"%s",buff+i);
 }
-
-#undef size
 
 bool _____err(char *file, int line){
   if(!errno)return false;
@@ -67,10 +76,21 @@ bool _____err(char *file, int line){
   return true;
 }
 
-bool _____assert(bool cond,const char * msg){
+bool _____assert(bool cond,...){
   if(cond)return false;
+  
+  const char * fmt;
+  
   ____stack_trace=false;
   errno=____NON_STANDARD_ERROR; 
-  strncpy(____msg,msg,____MSG_TAB_SIZE); 
+  va_list args;
+  va_start(args,cond);
+  fmt=va_arg(args,const char *);
+  vsnprintf(____msg,____MSG_TAB_SIZE,fmt,args);
+  va_end(args);
   return true;
 }
+
+#undef ____NON_STANDARD_ERROR
+#undef ____MSG_TAB_SIZE
+#undef ____SIZE         
